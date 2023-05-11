@@ -1,6 +1,8 @@
 version: '3'
 services:
   keycloak1:
+      env_file:
+        - ./.env
       restart: always
       image: quay.io/keycloak/keycloak:legacy
       command:
