@@ -91,5 +91,13 @@ cat .ssh/id_rsa.pub > authorized_keys
 cd /home/keycloak
 git clone git@github.com:sandbox-trp/keycloak-ha.git
 ```
-# PASOS PARA PARAMETRIZAR (WIP)
+#### Editar parametros .env (revisar comentarios en cada .env para guia)
+
+#### Levantar el servicio
+```bash
+cd /home/keycloak/keycloak-node
+o
+cd /home/keycloak/postgress-node
+sudo docker compose up
+```
 
