@@ -4,16 +4,17 @@ volumes:
       driver: local
 services:
   postgres:
+      env_file:
+        - ../.env
       image: postgres
       restart: always
       volumes:
 # Montamos el volumen de datos para dar persistencia
         - postgres_data:/var/lib/postgresql/data
       environment:
-# Solo configuramos el usuario, contraseña y nombre de la base de datos a usar por KC
-        POSTGRES_DB: keycloak
-        POSTGRES_USER: keycloak
-        POSTGRES_PASSWORD: password
+        POSTGRES_DB: ${POSTGRES_DB}
+        POSTGRES_USER: ${POSTGRES_USER}
+        POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       ports:
         - 5432:5432 #con este network_mode no es necesario pero dejo los puertos para tener la referencia rapida
         - 7600:7600 
