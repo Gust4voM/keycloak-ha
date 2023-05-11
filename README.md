@@ -92,8 +92,11 @@ cd /home/keycloak
 git clone git@github.com:sandbox-trp/keycloak-ha.git
 ```
 #### Editar parametros .env (revisar comentarios en cada .env para guia)
+#### Editar JGROUPS_DISCOVERY_PROPERTIES en docker-compose.yml
+Dentro de esta variable de entorno esta declarado initial_hosts="node1[7600],node2[7600]", reemplazar node1 y node2 por las ips de los hosts de Keycloak (que queden igual en ambos nodos)
 
 #### Levantar el servicio
+##### IMPORTANTE: Antes que nada tener la base de datos corriendo, de lo contrario Keycloak no podra inciar correctamente
 ```bash
 cd /home/keycloak/keycloak-node
 o
