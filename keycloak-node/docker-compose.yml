@@ -1,0 +1,36 @@
+version: '3'
+services:
+  keycloak1:
+      restart: always
+      image: quay.io/keycloak/keycloak:legacy
+      command:
+# Este command overridea el del dockerfile original, la unica diferencia es que aparte de bindear el puerto de trabajo al comodin
+# agrega el bindeo de los Jgroups, escencial para poder clusterizar y no se bindea con los puertos de la aplicacion, debe hacerse asi
+        - -b
+        - 0.0.0.0
+        - -Djgroups.bind_addr= #IP del HOST
+      environment:
+        DB_VENDOR: POSTGRES
+        DB_ADDR:  #IP de la BD
+# La info de DB debe matchear lo configurado en el dockerfile de la postgress
+        DB_DATABASE: keycloak
+        DB_USER: keycloak 
+        DB_SCHEMA: public
+        DB_PASSWORD: password
+# Variables de KC, esta comentado el
+        KEYCLOAK_USER: admin
+        KEYCLOAK_PASSWORD: password
+        KEYCLOAK_URL: http://keycloak:8080/
+        KEYCLOAK_HOSTNAME: keycloak.trp.com.ar
+        PROXY_ADDRESS_FORWARDING: "true"
+        KEYCLOAK_FRONTEND_URL: https://keycloak.trp.com.ar
+#Esta cfig de cache es para tener dos nodos activo-activo
+        CACHE_OWNERS_AUTH_SESSIONS_COUNT: 2 #En cuantos nodos replica el cache
+        CACHE_OWNERS_COUNT: 2 
+        JGROUPS_DISCOVERY_EXTERNAL_IP: keycloak #O IP DEL HOST
+        #JGROUPS_DISCOVERY_PROTOCOL: JDBC_PING
+        JGROUPS_DISCOVERY_PROTOCOL: TCPPING
+#Estas propiedades tienen un mix de lo que necesitaria el JDBC_PING y el TCPPING, quedan aca para prender y segun sea necesario
+#En los initial_hosts debemos especificar la ip de nuestros nodos, el puerto 7600 no se modifica
+        JGROUPS_DISCOVERY_PROPERTIES: datasource_jndi_name=java:jboss/datasources/KeycloakDS,info_writer_sleep_time=500,initialize_sql="CREATE TABLE IF NOT EXISTS JGROUPSPING ( own_addr varchar(200) NOT NULL, cluster_name varchar(200) NOT NULL, created timestamp default current_timestamp, ping_data BYTEA, constraint PK_JGROUPSPING PRIMARY KEY (own_addr, cluster_name))",initial_hosts="node1[7600],node2[7600]",timeout="10000"
+      network_mode: host
