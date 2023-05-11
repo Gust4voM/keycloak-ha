@@ -64,11 +64,32 @@ sudo reboot
 ```bash
 sudo yum install git
 ```
-### Uso:
+### Despliegue:
 
-Una vez seteadas las variables necesarias (ver los .yml tienen comentado lo que no es constante), en cada nodo hacer un docker compose up en el directorio correspondiente a el servicio que querramos levantar.
-Con las variables de entorno configuradas en el directorio donde esta el manifiesto hacer:
+#### Crear un usuario para el servicio y agregarlo al grupo docker
 
 ```bash
-sudo docker-compose up
+mkdir /home/keycloak
 ```
+
+```bash
+useradd -d /home/keycloak -s /bin/bash keycloak
+usermod -aG docker keycloak
+sudo reboot # para aplicar cambio de grupo
+```
+#### Crear una llave para el deploy
+
+```bash
+su - keycloak
+ssh-keygen -t rsa -b 4096
+cat .ssh/id_rsa.pub > authorized_keys
+```
+##### Agregar la llave al repo con permisos
+
+#### Clono repo
+```bash
+cd /home/keycloak
+git clone git@github.com:sandbox-trp/keycloak-ha.git
+```
+# PASOS PARA PARAMETRIZAR (WIP)
+
